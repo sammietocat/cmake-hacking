@@ -1,0 +1,109 @@
+Just like other programming books, we're going to start by a glimpse of the ``Hello World'' example of CMake.
+\section{Preparation---CMake Installation}
+\subsection{3 Options}
+  \begin{itemize}  
+    \item CMake distributions
+    \item Precomipled CMake at \url{www.cmake.org/download/}
+    \item Build from source with a modern C++ compiler
+  \end{itemize}  
+\subsection{On UNIX and Mac}
+  If CMake is provided as one of standard packages in your system, follow your system's package installation instructions.\par
+  Otherwise (because of no CMake as standard package or out-of-date CMake), download the precompiled binaries from \url{www.cmake.org/download/}. Then extract all files from the compressed tar file downloaded, and place the extracted files into a destination directory (typically \texttt{/usr/local}) as you like.
+\subsection{On Windows}
+  Download the Windows' installer or zip of CMake from \url{www.cmake.org/download/}, which are given one of following names for a specific version specified by tag \texttt{version} (which is evaluated as 3.9.4 throughout this book)
+  \begin{itemize}  
+    \item \texttt{cmake-\{version\}-win64-x64.msi} as an installer to run as an executable
+    \item \texttt{cmake-\{version\}-win64-x64.zip} as a zip archive
+  \end{itemize}  
+  For the installer, just click it and follow the prompt to install CMake to somewhere in your Windows machine.\par
+  And for the zip archive, unzip it and place the files extracted to somewhere you like. Unlike the installation by means of installer, you need to append the absolute path of the \texttt{bin} directory under where you place the CMake folder to the system path.
+\subsection{Building from Source}
+  The CMake source code can be obtained by from \url{www.cmake.org/download/}, which are typically named as 
+  \begin{itemize}  
+    \item \texttt{cmake-\{version\}.tar.gz}/\texttt{cmake-\{version\}.tar.Z} for Unix/Linux 
+    \item \texttt{cmake-\{version\}.zip} for Windows)
+  \end{itemize}   
+  The source code can be built in 2 different ways as follows
+  \begin{itemize}  
+    \item If a older version of CMake is available, build the new one with the old one
+    \item Otherwise, CMake may be built by running its bootstrap build script. 
+      \begin{enumerate}  
+        \item Change directory into your CMake source directory
+        \item Execute 3 commands as listed in Listing~\ref{list-install-cmake-from-src}
+\begin{lstlisting}[caption={Install CMake by the bootstrap script}, label=list-install-cmake-from-src]
+./bootstrap
+make
+make install
+\end{lstlisting}
+      \end{enumerate}  
+  \end{itemize}  
+  The \mkeyword{make install} step is optional since CMake can run directly from the build directory if desired. On UNIX, if you are not using the GNU C++ compiler, you need to tell the bootstrap script which compiler you want to use. This is done by setting the environment variable \mkeyword{CXX} before running bootstrap. If you need to use any special flags with your compiler, set the \mkeyword{CXXFLAGS} environment variable.
+
+\section{Basic CMake Syntax}
+The build process is controlled by creating one or more \texttt{CMakeLists} files (the suffix \texttt{txt} is omitted for convenience) in each of the directories that make up a project. The \texttt{CMakeLists} files should contain the project description in CMake's simple \textbf{language}. The language is expressed as a series of \textbf{commands}. Each command is evaluated in the order that it appears in the CMakeLists file. The commands have the form as Listing~\ref{list-cmake-cmd-format}
+\begin{lstlisting}[caption={Command format in CMakeLists},label=list-cmake-cmd-format]
+command (args...)
+\end{lstlisting}
+where 
+  \begin{itemize}  
+    \item \mkeyword{command} is the name of the command, which is canse insensitive. That's, \mkeyword{command}, \mkeyword{COMMAND} or \mkeyword{Command} means the same for CMake
+    \item \mkeyword{args} is a white-space separated list of arguments. (Arguments with embedded white-space should be double quoted.)
+  \end{itemize}  
+\section{Hello World Example}
+\subsection{Prepare the CMakeLists File}
+  Bla, bla, \dots, it's time for the ``Hello World'' business.\par
+  Suppose we're going to build a \texttt{Hello} project written in C++ consisting only a single file \texttt{hello.cpp} as Listing~\ref{list-hello-world-cpp}
+\begin{lstlisting}[language=C++,caption={Hello World project in C++},label=list-hello-world-cpp]
+#include <iostream>
+
+int main(int argc, char *argv[]) {
+  std::cout << "Hello World!" << std::endl;
+
+  return 0;
+}
+\end{lstlisting}
+  Before the compilation, we need to make up a \texttt{CMakeLists} file as Listing~\ref{list-cmakelists-hello-world}
+\begin{lstlisting}[caption={CMakeLists for Hello World in C++},label=list-cmakelists-hello-world]
+cmake_minimum_required(VERSION 3.9.4)
+project (Hello CXX) 
+add_executable (hello hello.cpp)
+\end{lstlisting}
+  where 
+  \begin{itemize}  
+    \item \mkeyword{cmake_minimum_required} command specify the minimum version of CMake required by the project
+    \item \mkeyword{project} command indicates 
+      \begin{itemize}  
+        \item the name (\texttt{Hello}) of the resulting workspace
+        \item programming languages (\texttt{CXX} for C++) supported by the project
+      \end{itemize}  
+    \item \mkeyword{add_executable} command adds an executable target \texttt{hello} to build from the source file \texttt{hello.cpp}
+  \end{itemize}  
+   With the \texttt{CMakeLists} file ready, build of the \texttt{hello} executable described in section~\ref{subsec-build-hello-world} to generate the Makefiles or Microsoft project files.
+\subsection{Build the Project}\label{subsec-build-hello-world}
+  When building a project, two main directories are of involved, i.e., \textbf{the source directory} and \textbf{the binary directory}, where
+  \begin{itemize}  
+    \item The source directory stores the source code for your project, and the CMakeLists files
+    \item The binary directory is to store the resulting object files, libraries, and executables. 
+  \end{itemize}  
+  Typically CMake will not write any files to the source directory, only the binary directory.\par
+  Thanks to the separation of the source directory from the binary directory, CMake support 2 kinds of building
+  \begin{itemize}  
+    \item \textbf{in-source build}: the source and binary directories are the same
+    \item \textbf{out-of-source build}: otherwise 
+  \end{itemize}  
+	Having the build tree differ from the source tree also makes it easy to support having multiple builds of a single source tree.
+\subsubsection{Running from the Command Line}
+  From the command line, CMake can be run as an interactive question and answer session (called \textbf{the interactive mode}) or as a non-interactive program (called \textbf{the non-interactive mode}.\par
+  \begin{itemize}  
+    \item To run in interactive mode, just pass the \mkeyword{-i} option to CMake. CMake will ask you for some options/values set for the project, and provide reasonable defaults until no more questions is needed
+    \item In non-interactive mode, CMake will run according to some specified setting, without any interaction with users
+  \end{itemize}  
+    For starters, we'd to run CMake build our \texttt{Hello World} project in non-interactive mode as follows
+  \begin{enumerate}    
+    \item we'd like to employ the out-of-source build, so we make an empty folder named \texttt{build} under current project directory
+    \item change the current working to \texttt{build} directory to where you want the binaries to be placed
+    \item run \mkeyword{cmake ..}, since the build directory is one level under the source directory
+    \item then compile the project by \mkeyword{make}
+  \end{enumerate}    
+  After all 3 steps above, we should get a \texttt{hello} executable in current binary directory where we invoke CMake.\par 
+	That is all there is to installing and running CMake for simple projects. In the following chapters we will consider CMake in more detail and how to use it on more complex software projects.

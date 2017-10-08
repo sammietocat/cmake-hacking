@@ -1,0 +1,67 @@
+  CMake is an open source build manager for software projects that allows developers to specify build parameters in a simple protable text file format. It can handle several difficult aspects of building software such as 
+  \begin{itemize}  
+    \item cross platform builds
+    \item system introspection
+    \item user customized builds  
+  \end{itemize}  
+  according to a user-friendly script file. \par
+  It's a unified build system, which helps to eliminate the need of maintaining platform-specifc build systems, such as, the \texttt{Makefile} for UNIX and \texttt{workspace} for Microsoft Visual Studio.\par
+  CMake provides many benefits for single platform multi-machine development environments including:
+	\begin{itemize}
+    \item Search automatically for programs, libraries, and header files that may be required by the software being built. And also onsider environment variables and Window's registry settings when searching.
+		\item Enable building in a directory tree outside of the source tree. 
+		\item Extended by complex custom commands for automatically generated new source files during the build process and then are compiled into the software.
+		\item Allow users to select optional components at configuration time. 
+		\item Generate workspaces and projects automatically from a simple text file. 
+		\item Switch easily between static and shared builds. 
+		\item Build up file dependencies automatically and support for parallel builds on most platforms.
+	\end{itemize}
+	When developing cross platform software, CMake provides a number of additional features:
+  \begin{itemize}
+		\item The ability to check for hardware specific characteristics like machine byte order.
+		\item A single set of build configuration files that work on all platforms. 
+		\item Support for building shared libraries on all platforms that support it.
+    \item The ability to configure files with system dependent information, such as the location of data files and other information (e.g., macro definitions by \mkeyword{\#define} in C++). 
+	\end{itemize}
+\section{The history of CMake}
+  CMake development began in 1999 as part of the Insight Toolkit (\href{https://itk.org/}{ITK}) funded by the US National Library of Medicine. 
+\section{Why Not Others}
+\subsection{Autoconf}	
+	Autoconf combined with automake provides some of the same fimctionality as CMake, but 
+  \begin{itemize}  
+    \item Requires the installation of many additional tools not found natively on a Windows box. 
+    \item Difficult to use or extend and impossible for some tasks that are easy in CMake. 
+    \item Generates \texttt{Makefiles} that will force users to the command line.
+    \item Does not support dependent options where one option depends on some other property or selection.
+  \end{itemize}  
+  More for UNIX users, CMake provides
+  \begin{itemize}  
+    \item Automated dependency generation that is not done directly by autoconf.
+    \item Simple input format is easier to read and maintain than a combination of \texttt{Makefile.in} and \texttt{configure.in} files. 
+    \item The ability to remember and chain library dependency information has no equivalent in autoconf/automake.
+  \end{itemize}  
+\subsection{JAM, qmake, SCons, or ANT}
+   Many of these tools require other tools such as Python or Java to be installed before they will work.
+\subsection{Script It Yourself}
+  \begin{itemize}  
+    \item Dependencies management is better done by CMake.
+    \item CMake would require no more tools than 
+      \begin{itemize}  
+        \item a C compiler, that compiler's native build tools
+        \item a CMake executable. CMake was written in C++, requires only a C++ compiler to build and precompiled binaries are available for most systems.  
+      \end{itemize}  
+    \item Self Scripting typically means platform-dependence, limiting its application to building in Mac and Windows.
+  \end{itemize}  
+\section{Platforms Requirement}
+  Most OSs, including
+  \begin{itemize}  
+    \item Microsoft Windows
+    \item Apple Mac OS X
+    \item Most UNIX or UNIX-like platforms
+  \end{itemize}  
+  And most common compilers, such as 
+  \begin{itemize}  
+    \item GNU compilers 
+    \item Visual Studio
+  \end{itemize}  
+

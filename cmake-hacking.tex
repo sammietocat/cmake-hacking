@@ -1,0 +1,61 @@
+\documentclass[a4paper,10pt]{book}
+
+\usepackage{fontspec}
+\usepackage[margin=16mm]{geometry}
+\usepackage{hyperref}
+\usepackage{indentfirst}
+\usepackage{listings}
+\usepackage{tcolorbox}
+\usepackage{titletoc}
+\usepackage{xcolor}
+
+\title{CMake Hacking}
+\author{sammietocat}
+\date{2017-10-08}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
+\lstset{
+  basicstyle=\ttfamily,           % the size of the fonts that are used for the mkeyword
+  numbers=left,
+  tabsize=2,
+  breaklines=true,
+  keywordstyle=\color{magenta},          % keyword style
+  commentstyle=\color{red!70!green},       % comment style
+  stringstyle=\color{cyan},          % string literal style
+  frame=trBL,     
+  numberstyle=\footnotesize,
+  morecomment=[l]{\#},
+  morecomment=[s]{/*}{*/},
+  escapeinside={(*@}{@*)},
+  showspaces=false,
+}
+\newcommand{\mkeyword}[1]{{\color{magenta} \lstinline!#1!}}
+\newtcolorbox{mquote}{colframe=gray,leftrule=2mm,toprule=0mm,rightrule=0mm,bottomrule=0mm,sharp corners}
+\setmainfont{DejaVu Serif Condensed}
+\setsansfont{DejaVu Sans Condensed}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\iffalse
+\begin{mquote}
+  Hello Box
+\end{mquote}
+\fi
+
+\chapter*{Foreword}
+  \addcontentsline{toc}{chapter}{Foreword}
+  \input{chapter/0-foreword}
+
+\chapter{Why CMake}
+  \input{chapter/01-why-cmake}
+
+\chapter{Say Hello}
+  \input{chapter/02-say-hello}
+\end{document}

@@ -1,5 +1,8 @@
 # CMake Hacking [2017-10-08]  
 
+![](https://img.shields.io/badge/license-MIT%20License-blue.svg)
+![](https://img.shields.io/badge/platfotm-linux-brightgreen.svg) 
+
 ## Foreword   
 This project serves as personal notes subject to `CMake`, a cross-platform tool easing the process of building, testing and packaging softwares.  
 

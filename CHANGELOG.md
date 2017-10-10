@@ -1,5 +1,10 @@
 # CMake Hacking [2017-10-08]  
 
+## [2017-10-10]  
++ **Added**   
+  - `Chapter 03. Add a Header File` draft  
+
+
 ## [2017-10-08]  
 + **Added**  
   - draft version of `Foreword` specifying the convention of the book  

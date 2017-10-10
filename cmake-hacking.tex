@@ -4,6 +4,7 @@
 \usepackage[margin=16mm]{geometry}
 \usepackage{hyperref}
 \usepackage{indentfirst}
+\usepackage{imakeidx}
 \usepackage{listings}
 \usepackage{tcolorbox}
 \usepackage{titletoc}
@@ -34,6 +35,7 @@
   escapeinside={(*@}{@*)},
   showspaces=false,
 }
+\makeindex[intoc]
 \newcommand{\mkeyword}[1]{{\color{magenta} \lstinline!#1!}}
 \newtcolorbox{mquote}{colframe=gray,leftrule=2mm,toprule=0mm,rightrule=0mm,bottomrule=0mm,sharp corners}
 \newtcolorbox{minfo}[1]{colframe=cyan,title=#1}
@@ -55,102 +57,16 @@
   %\input{chapter/0-foreword}
 
 \chapter{Why CMake}
-  %\input{chapter/01-why-cmake}
+  \input{chapter/01-why-cmake}
 
 \chapter{Say Hello}
-  %\input{chapter/02-say-hello}
+  \input{chapter/02-say-hello}
 
 \chapter{Add a Header File}
-For better organization, a C++ project tends to put its interfaces into separate files. And these separate files usually take form of 
-\begin{itemize}
-  \item \textbf{header files} with .hpp suffix, is where interfaces are declared 
-  \item \textbf{source files} with .cpp suffix, to specify the detailed implementation of interfaces in the corresponding header files
-\end{itemize}
-In such structure, the compiler needs information of how to find those header files required by the project. One conventional way to do so is specifying paths (either relative or absolute) by means of compilation options.\par
-In the world of \texttt{cmake}, these options can be defined in the \texttt{CMakeLists.txt}. As usual, we're going to explain how it's done by an example. For brevity, our demo will go by adding a header-only interface to \texttt{Hello} project from previous chapter. 
-\begin{minfo}{About header-only interfaces}
-  For a header-only interface, the declaration and implementation of it is put together in one header file, no corresponding source file
-\end{minfo}
-\section{Make up the Hello Project}
-The file structure of the project is organized as follows
-\begin{lstlisting}
-|-CMakeLists.txt
-|-include
-| |-greeter
-| | |-about_time.hpp
-|-src
-| |-hello.cpp
-\end{lstlisting}
-\subsection{C++ source codes}
-The source codes of the C++ part are respectively shown by listings~\ref{ch03-list-greeter-about-time} and ~\ref{ch03-list-hello}. \par
-\begin{lstlisting}[caption={Codes for \texttt{include/greeter/about\_time.hpp}},label=ch03-list-greeter-about-time,language=C++]
-#ifndef HELLO_ABOUT_TIME_HPP
-#define HELLO_ABOUT_TIME_HPP
+  \input{chapter/3-add-a-header-file}
 
-#include <iostream>
+\chapter{Tag Version}
+TBA\dots
 
-void sayGoodMorningTo(const std::string &who) {
-    std::cout << "Good morning, " << who << std::endl;
-}
-
-#endif //HELLO_ABOUT_TIME_HPP
-\end{lstlisting}
-\begin{lstlisting}[caption={Codes for \texttt{src/hello.cpp}},label=ch03-list-hello,language=C++]
-#include "greeter/about_time.hpp"
-
-int main(int argc, char *argv[]) {
-    sayGoodMorningTo("CMake");
-
-    return 0;
-}
-\end{lstlisting}
-As indicated, the program invoke the the \mkeyword{sayGoodMorningTo()} function in \texttt{include/greeter/about\_time.hpp} to print a \mkeyword{"Good morning, CMake"} to the standard output.
-
-\subsection{Especially CMakeLists Script}
-Our \texttt{CMakeLists} file goes as listings~\ref{ch03-list-cmakelists}.\par
-\begin{lstlisting}[caption={Codes for \texttt{CMakeLists.txt}},label=ch03-list-cmakelists]
-cmake_minimum_required(VERSION 3.9.4)
-project(Hello CXX)
-
-#[[ add the "include" directory under the source tree to the search path
-  so that the '#include "greeter/about_time.hpp"' directive can be
-  resolved ]]
-include_directories("${PROJECT_SOURCE_DIR}/include")
-
-# specify source files needed by the executable 'hello' to build
-add_executable(hello src/hello.cpp)
-\end{lstlisting}
-Apart form the \mkeyword{cmake_minimum_required}, \mkeyword{project} and \mkeyword{add_executable} commands, we introduce 3 new features here
-\begin{itemize}
-	\item Comments
-    \begin{itemize}
-      \item \textbf{Bracket Comment}: start with \mkeyword{#[[} and end with \mkeyword{]]}, which can span across mutiple lines
-      \item \textbf{Line Comment}: start with \mkeyword{#} and run until the end of the line
-    \end{itemize}
-  \item \mkeyword{include_directories} command: add the given directories to paths which compilers use to search for the include files. If the argument is specified as relative paths, it will be interpreted with respect to the current source directory.
-  \item \textbf{Variable References}
-    \begin{itemize}
-      \item format: \mkeyword{$\{variable_name\}}
-      \item A variable reference will be dereferenced as the value of variable if the value is set, and an empty string otherwise.
-      \item Here, the variable in use is a built-in variable \mkeyword{CMAKE_SOURCE_DIR} which is predefined by the \mkeyword{cmake}. It refers to full path to the top level of the source tree. And its counterpart is the \mkeyword{CMAKE_BINARY_DIR} variable assuming the path to the top level of binary tree.  
-    \end{itemize}
-\end{itemize}
-\section{Build the Project}
-So after horrible jargons, let's build the project to check if it's ok. Suppose we're in the source tree of the project now. Just execute following commands as listing~\ref{ch03-list-build-hello} one by one, we will see it actually works!
-\begin{lstlisting}[caption={Command to build the project},label=ch03-list-build-hello]
-mkdir build
-cd build
-cmake ..
-make
-\end{lstlisting}
-Which make a directory \texttt{build} as the binary tree and compile the project to generate the executable in it.\par
-If nothing wrong, the output should be something similar to listing~\ref{ch03-list-ok-build}. 
-\begin{lstlisting}[caption={Successful build},label=ch03-list-ok-build]
-[ 50%] Building CXX object CMakeFiles/hello.dir/src/hello.cpp.o
-[100%] Linking CXX executable hello
-[100%] Built target hello
-\end{lstlisting}
-Finally, find the generated \mkeyword{hello} executable, run it, and you should see ``\mkeyword{Good morning, CMake}'' in the standard output. Congratulations! \par
-That's all for this example~
-
+\printindex
 \end{document}

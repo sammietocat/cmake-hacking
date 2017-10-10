@@ -1,0 +1,114 @@
+\section{Motivation}
+In an incremental development, a project is used to be built up feature by feature. To distinguish between these project with features added/removed/fixed, we usually tag these projects with special flags called version numbers. With each significant change, we assign the new project with a incremental version number.\par
+For example, given a project \texttt{World}, it may called \texttt{World-0.1.2} at its initial launch, where
+\begin{itemize}  
+  \item 0 is the major version number, which will be incremented in case of a significant change, e.g., \texttt{World-1.1.2}
+  \item 1 is the minor version number, and updated for a small change, e.g., \texttt{World-0.2.2}
+  \item 2 is the revision number, signaling some revisions to users if any, e.g., \texttt{World-0.1.3}
+\end{itemize}  
+One common usage of such version number is to tell users the version of software in use when given the \mkeyword{--version} or \mkeyword{-v} option. \par 
+Without \mkeyword{cmake}, these version numbers are usually hardcoded into the source codes. However, in our \mkeyword{cmake} style, we can specify them in the \texttt{CMakeLists} script, making them more configurable. \par
+So, to keep up the convention, we'd like to tag the version of our \texttt{Hello} project, too. Again comes the example.
+\section{Make up the Toy Example}
+The file structure of our demo project goes as listing~\ref{ch04-list-file-struct} \par
+\begin{lstlisting}[caption={File structure of the toy example},label=ch04-list-file-struct]
+|-CMakeLists.txt
+|-include
+| |-config.hpp.in
+|-src
+| |-hello.cpp
+\end{lstlisting}
+\subsection{The C++ Part}
+Source codes for C++ part are shown as listing~\ref{ch04-hello-config} and ~\ref{ch04-hello-main}. \par
+\begin{lstlisting}[caption=\texttt{config.hpp.in},label=ch04-hello-config]
+#ifndef HELLO_CONFIG_HPP
+#define HELLO_CONFIG_HPP
+
+#cmakedefine HELLO_VERSION_MAJOR "@HELLO_VERSION_MAJOR@"
+#cmakedefine HELLO_VERSION_MINOR "@HELLO_VERSION_MINOR@"
+#define HELLO_REVISION "@HELLO_REVISION@"
+
+#cmakedefine HELLO_FALSE_CONSTANT "@HELLO_FALSE_CONSTANT@"
+
+#endif //HELLO_CONFIG_HPP
+\end{lstlisting}
+\begin{lstlisting}[caption=\texttt{hello.cpp},label=ch04-hello-main]
+#include <iostream>
+
+#include "config.hpp"
+
+int main(int argc, char *argv[]) {
+    std::cout << argv[0] << "  " << HELLO_VERSION_MAJOR << "."
+              << HELLO_VERSION_MINOR << "." << HELLO_REVISION << std::endl;
+
+    return 0;
+}
+\end{lstlisting}
+The program simply print the two version numbers defined in the \mkeyword{include/config.hpp} (still not generated yet!).
+\subsection{Especially the CMakeLists}
+The specification of the \texttt{CMakeLists} file to use is depicted as listing~\ref{ch04-hello-cmakelists}.\par
+\begin{lstlisting}[caption=\texttt{CMakeLists.txt},label=ch04-hello-cmakelists]
+cmake_minimum_required(VERSION 3.9.4)
+project(Hello CXX)
+
+# specify the version number
+set(HELLO_VERSION_MAJOR 3)
+set(HELLO_VERSION_MINOR 1)
+set(HELLO_REVISION 0)
+set(HELLO_FALSE_CONSTANT 0)
+
+# derive the "config.hpp" from the version numbers specified
+# in this script, i.e., HELLO_VERSION_MAJOR and
+# HELLO_VERSION_MINOR
+configure_file("${PROJECT_SOURCE_DIR}/include/config.hpp.in"
+        "${PROJECT_BINARY_DIR}/include/config.hpp" @ONLY)
+
+#[[ add the "include" directory under the binary tree to the search path
+  so that the '#include "config.hpp"' directive can be
+  resolved ]]
+include_directories("${PROJECT_BINARY_DIR}/include")
+
+# specify source files needed by the executable 'hello' to build
+add_executable(hello src/hello.cpp)
+\end{lstlisting}
+As you see, we can make cmake friends with several new commands agains. Let's introduce them one by one.
+\begin{itemize}  
+  \item \mkeyword{set} command for normal variables
+    \begin{itemize}  
+      \item Format: \mkeyword{set(<variable> <value>... [PARENT_SCOPE]}
+        \begin{itemize}  
+          \item \mkeyword{<varaible>} define the name of variable, which makes it dereferenceable by the \mkeyword{$\{variable\}} syntax
+          \item \mkeyword{<value>} is a list of arguments (maybe none) as the value of the defined variables
+          \item As for the optional \mkeyword{PARENT_SCOPE}, we'd like to leave it for future 
+        \end{itemize}  
+      \item Last chapter, we just learn how to use variables pre-defined by the \mkeyword{cmake} system. The \mkeyword{set} command here enables us to define our own variables now. 
+      \item Here, we defined 3 variables
+        \begin{itemize}  
+          \item \mkeyword{HELLO_VERSION_MAJOR} with value 3 
+          \item \mkeyword{HELLO_VERSION_MINOR} with value 1 
+          \item \mkeyword{HELLO_REVISION} with value 0
+        \end{itemize}  
+. These variables are visible for the scope after their definitions. 
+    \end{itemize}  
+  \item \mkeyword{configure_file} command for copying file \mFileId{include/config.hpp.in} to the \mFileId{include} folder in the binary tree and update its content with variables in the \texttt{CMakeLists}. As seen, mainly 2 macros involved: \mkeyword{#cmakedefine} and \mkeyword{#define}
+    \begin{itemize}  
+      \item macro \mkeyword{#cmakedefine} is the recommanded one
+        \begin{itemize}  
+          \item It says that the \mkeyword{@HELLO_VERSION_MAJOR@}, \mkeyword{@HELLO_VERSION_MINOR@} and \mkeyword{@HELLO_REVISION@} should be replaced with values of the corresponding cmake variables assuming the same name with the \mkeyword{@} trimmed out. For example, \mkeyword{@HELLO_VERSION_MAJOR@} should be updated as the value of \mkeyword{HELLO_VERSION_MAJOR} in the \mFileId{CMakeLists}.
+          \item As for \mkeyword{@HELLO_FALSE_CONSTANT@}, thing is a bit tricky. Since variable \mkeyword{HELLO_FALSE_CONSTANT} equals to 0 treated as a so-called \textbf{false constant} by \mkeyword{If} command (Sorry for another new jargon:(), macro declaration (\mkeyword{#cmakedefine HELLO_FALSE_CONSTANT @HELLO_FALSE_CONSTANT@}) will be replaced as (\mkeyword{/* #undef HELLO_FALSE_CONSTANT */}). 
+          \item the \mkeyword{@...@} may be replaced with \mkeyword{$\{...\}} if the \mkeyword{@ONLY} option is unspecified here.
+        \end{itemize} 
+      \item macro \mkeyword{#define} is the deprecated alternative to \mkeyword{#cmakedefine}. Unlike \mkeyword{#cmakedefine}, it doesn't suffer from the trouble of false constants. 
+    \end{itemize}  
+\end{itemize}  
+\subsection{Build it!}
+Bla, bla, \dots. Let's see if it's real.\par
+Again, change the source tree of the project, and run following commands one by one as listing~\ref{ch04-hello-build}. \par
+\begin{lstlisting}[caption={Commands to build the project},label=ch04-hello-build]
+mkdir build
+cd build
+cmake ..
+make
+\end{lstlisting}
+Check the \mFileId{include} folder in the binary tree, you should see the generated \mFileId{config.hpp} file. And run the \mFileId{hello} executable, the expected output will printed~\par
+Haha, another example~

@@ -36,6 +36,7 @@
   showspaces=false,
 }
 \makeindex[intoc]
+\newcommand{\mFileId}[1]{{\color{cyan} \lstinline!#1!}}
 \newcommand{\mkeyword}[1]{{\color{magenta} \lstinline!#1!}}
 \newtcolorbox{mquote}{colframe=gray,leftrule=2mm,toprule=0mm,rightrule=0mm,bottomrule=0mm,sharp corners}
 \newtcolorbox{minfo}[1]{colframe=cyan,title=#1}
@@ -54,7 +55,7 @@
 
 \chapter*{Foreword}
   \addcontentsline{toc}{chapter}{Foreword}
-  %\input{chapter/0-foreword}
+  \input{chapter/0-foreword}
 
 \chapter{Why CMake}
   \input{chapter/01-why-cmake}
@@ -65,8 +66,8 @@
 \chapter{Add a Header File}
   \input{chapter/3-add-a-header-file}
 
-\chapter{Tag Version}
-TBA\dots
+\chapter{Tag the Version}
+  \input{chapter/04-tag-the-version}
 
-\printindex
+%\printindex
 \end{document}

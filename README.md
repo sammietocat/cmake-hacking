@@ -11,9 +11,9 @@ This project serves as personal notes subject to `CMake`, a cross-platform tool 
 + [x] Chapter 01. Why CMake  
 + [x] Chapter 02. Say Hello  
 + [x] Chapter 03. Add a Header File  
++ [x] Chapter 04. Tag the Version  
 
 ### Working  
-+ [ ] Chapter 04. Tag Version  
 
 ## Build the book from the TEX file  
 For those attempting to make the book to suit their flavor, they can update the content of the `cmake-hacking.tex` file, and then build up the customized version of the book as follows   

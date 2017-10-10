@@ -3,7 +3,8 @@
 ## [2017-10-10]  
 + **Added**   
   - `Chapter 03. Add a Header File` draft  
-
++ **Fixed**  
+  - refactor the file structure of the `Hello` project for Chapter 01   
 
 ## [2017-10-08]  
 + **Added**  
